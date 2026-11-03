@@ -94,6 +94,9 @@ var _viewfinder_node: Control = null
 
 var _camera_zoom: Vector2 = Vector2.ONE
 
+var _first_selection_done: bool = false
+var _cut_pending: bool = false
+
 #region Camera3DResource
 
 var _prev_cam_attributes: CameraAttributes = null
@@ -332,6 +335,7 @@ func _ready() -> void:
 		printerr("Make sure the addon is enable or that the singleton hasn't been disabled inside Project Settings / Globals")
 
 	_find_pcam_with_highest_priority()
+	_first_selection_done = true
 
 	if _is_2d:
 		camera_2d.offset = Vector2.ZERO
@@ -340,6 +344,21 @@ func _ready() -> void:
 	else:
 		if not is_instance_valid(_active_pcam_3d): return
 		_active_pcam_3d_glob_transform = _active_pcam_3d.get_transform_output()
+
+	if _cut_pending: _apply_cut()
+
+
+func _apply_cut() -> void:
+	_cut_pending = false
+	if not is_instance_valid(_active_pcam_2d): return
+	if _active_pcam_2d.is_following():
+		_active_pcam_2d.teleport_position()
+	# Finish the host's cached tween, not the designer's reusable tween resource.
+	_tween_elapsed_time = _tween_duration
+	_tween_is_instant = true
+	_tween_follow_checker(0.0)
+	camera_2d.reset_physics_interpolation()
+	camera_2d.force_update_scroll()
 
 
 func _pcam_host_layer_changed(pcam: Node) -> void:
@@ -1426,6 +1445,17 @@ func refresh_pcam_list_priorty() -> void:
 ## [b][color=yellow]Note:[/color][/b] This function should only be needed if [member InterpolationMode] is set to [member InterpolationMode.MANUAL].
 func process(delta: float) -> void:
 	_tween_follow_checker(delta)
+
+
+## Shows the active [param PhantomCamera2D]'s view at once, finishing any tween in progress
+## without reselecting the camera or changing the authored tween settings. If called before
+## the host has made its first selection, the cut is applied right after that selection.[br]
+## [b]Note:[/b] 2D only.
+func cut() -> void:
+	if not _first_selection_done:
+		_cut_pending = true
+		return
+	_apply_cut()
 
 #endregion
 

@@ -67,6 +67,12 @@ public class PhantomCameraHost()
 
     public void Process() => Node.Call(MethodName.Process);
 
+    /// <summary>
+    /// Shows the active 2D phantom camera's view at once, without reselecting the camera or changing its
+    /// authored tween settings. Applied after the host's first selection if called earlier. 2D only.
+    /// </summary>
+    public void Cut() => Node.Call(MethodName.Cut);
+
     public PhantomCamera? GetActivePhantomCamera()
     {
         var result = Node.Call(MethodName.GetActivePhantomCamera);
@@ -101,6 +107,7 @@ public class PhantomCameraHost()
         public static readonly StringName SetHostLayersValue = new("set_host_layers_value");
 
         public static readonly StringName Process = new("process");
+        public static readonly StringName Cut = new("cut");
     }
 
     public static class SignalName
