@@ -67,10 +67,7 @@ public class PhantomCameraHost()
 
     public void Process() => Node.Call(MethodName.Process);
 
-    /// <summary>
-    /// Shows the active 2D phantom camera's view at once, without reselecting the camera or changing its
-    /// authored tween settings. Applied after the host's first selection if called earlier. 2D only.
-    /// </summary>
+    /// <summary>Shows the active camera's view at once, finishing any tween in progress.</summary>
     public void Cut() => Node.Call(MethodName.Cut);
 
     public PhantomCamera? GetActivePhantomCamera()

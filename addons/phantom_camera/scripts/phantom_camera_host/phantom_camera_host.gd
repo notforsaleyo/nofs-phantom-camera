@@ -1449,8 +1449,7 @@ func process(delta: float) -> void:
 
 ## Shows the active [param PhantomCamera2D]'s view at once, finishing any tween in progress
 ## without reselecting the camera or changing the authored tween settings. If called before
-## the host has made its first selection, the cut is applied right after that selection.[br]
-## [b]Note:[/b] 2D only.
+## the host has made its first selection, the cut is applied right after that selection.
 func cut() -> void:
 	if not _first_selection_done:
 		_cut_pending = true
