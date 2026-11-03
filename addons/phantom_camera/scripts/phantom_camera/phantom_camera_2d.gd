@@ -1468,7 +1468,10 @@ func get_follow_mode() -> int:
 ## Assigns a new [Node2D] as the [member follow_target].
 func set_follow_target(value: Node2D) -> void:
 	if follow_mode == FollowMode.NONE or follow_mode == FollowMode.GROUP: return
-	if follow_target == value: return
+	if follow_target == value:
+		# Tree exit stops following without clearing the target; reassignment can resume it.
+		_should_follow = is_instance_valid(value) and (follow_mode != FollowMode.PATH or is_instance_valid(follow_path))
+		return
 	follow_target = value
 	_follow_target_physics_based = false
 	if is_instance_valid(value):
