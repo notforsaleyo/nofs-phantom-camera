@@ -1042,6 +1042,9 @@ func _interpolate_position(target_position: Vector2, delta: float) -> void:
 
 
 func _smooth_damp(target_axis: float, self_axis: float, index: int, current_velocity: float, set_velocity: Callable, damping_time: float, delta: float) -> float:
+	# A zero-time refresh must not change position or poison velocity with 0 / 0.
+	if delta == 0.0:
+		return self_axis
 	damping_time = maxf(0.0001, damping_time)
 	var omega: float = 2 / damping_time
 	var x: float = omega * delta
