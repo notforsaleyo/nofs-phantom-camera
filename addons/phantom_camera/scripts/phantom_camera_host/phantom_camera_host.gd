@@ -804,7 +804,7 @@ func _check_pcam_physics() -> void:
 	if interpolation_mode == InterpolationMode.MANUAL: return
 
 	if _is_2d:
-		if _active_pcam_2d.get_follow_target_physics_based() and interpolation_mode != InterpolationMode.IDLE:
+		if interpolation_mode == InterpolationMode.PHYSICS or (interpolation_mode == InterpolationMode.AUTO and _active_pcam_2d.get_follow_target_physics_based()):
 			_follow_target_physics_based = true
 			camera_2d.reset_physics_interpolation()
 			camera_2d.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
@@ -840,11 +840,11 @@ func _check_pcam_physics() -> void:
 
 
 func _process(delta: float) -> void:
-	if _is_2d or _active_pcam_missing: return
+	if _active_pcam_missing or (_is_2d and _follow_target_physics_based): return
 	_tween_follow_checker(delta)
 
 func _physics_process(delta: float) -> void:
-	if not _is_2d or _active_pcam_missing: return
+	if _active_pcam_missing or not _is_2d or not _follow_target_physics_based: return
 	_tween_follow_checker(delta)
 
 
